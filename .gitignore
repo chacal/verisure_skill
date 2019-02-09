@@ -1,0 +1,8 @@
+.idea
+.aws-sam
+__pycache__/
+*.py[cod]
+*$py.class
+packaged_template.yaml
+venv
+secrets.properties

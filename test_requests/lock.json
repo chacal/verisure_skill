@@ -1,0 +1,20 @@
+{
+  "directive": {
+    "header": {
+      "namespace": "Alexa.LockController",
+      "name": "Lock",
+      "payloadVersion": "3",
+      "messageId": "01e8067f-310f-4649-a614-3d160a6513e8",
+      "correlationToken": "correlation-token"
+    },
+    "endpoint": {
+      "scope": {
+        "type": "BearerToken",
+        "token": "brearer-token"
+      },
+      "endpointId": "lock-003",
+      "cookie": {}
+    },
+    "payload": {}
+  }
+}

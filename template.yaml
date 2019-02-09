@@ -1,0 +1,34 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Alexa skill for controlling Verisure connected devices
+
+Parameters:
+  AlexaSkillId:
+    Type: String
+    AllowedPattern: amzn1.ask.skill.*
+    Description: "Enter ID for Alexa Skill which calls this lambda function. See: https://developer.amazon.com/alexa/console/ask"
+
+Resources:
+  VerisureSkill:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/
+      Handler: main.lambda_handler
+      Runtime: python3.7
+      MemorySize: 128
+      Timeout: 3
+
+  VerisureSkillAskPermission:
+    Type: AWS::Lambda::Permission
+    DependsOn: VerisureSkill
+    Properties:
+      Action: lambda:InvokeFunction
+      EventSourceToken:
+        Ref: AlexaSkillId
+      FunctionName: !GetAtt VerisureSkill.Arn
+      Principal: alexa-connectedhome.amazon.com
+
+Outputs:
+  VerisureSkillFunction:
+    Description: "VerisureSkill Lambda Function ARN"
+    Value: !GetAtt VerisureSkill.Arn
