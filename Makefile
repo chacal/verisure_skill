@@ -7,11 +7,11 @@ package: build
 deploy: package
 	@sam deploy --template-file packaged_template.yaml --stack-name verisure-skill --region us-east-1 --capabilities CAPABILITY_IAM --parameter-overrides $$(cat secrets.properties)
 
-test_discovery:
+test_discovery: build
 	@cat test_requests/discovery.json | sam local invoke | jq
 
-test_lock:
+test_lock: build
 	@cat test_requests/lock.json | sam local invoke | jq
 
-test_state:
+test_state: build
 	@cat test_requests/report_state.json | sam local invoke | jq
