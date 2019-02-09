@@ -90,11 +90,12 @@ def handle_unlock(endpointId, correlationToken):
 
 
 def handle_state_report(endpointId, correlationToken):
-    with open('state_response.tpl', 'r') as template_file:
-        template = Template(template_file.read())
-        response_json = template.substitute(lockState='UNLOCKED', timeOfSample=get_utc_timestamp(), messageId=str(uuid.uuid4()),
-                                            correlationToken=correlationToken, endpointId=endpointId)
-        return json.loads(response_json)
+    label = endpoint_to_device_label[endpointId]
+    with verisure_session() as session:
+        lock_state = session.get_lock_state()
+        lock = [ep for ep in lock_state if ep['deviceLabel'] == label][0]
+        return render_template('state_response.tpl', lockState=lock['lockedState'], timeOfSample=get_utc_timestamp(),
+                               messageId=str(uuid.uuid4()), correlationToken=correlationToken, endpointId=endpointId)
 
 
 def lambda_handler(event, context):
