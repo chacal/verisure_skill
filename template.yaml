@@ -27,7 +27,7 @@ Resources:
       Handler: main.lambda_handler
       Runtime: python3.7
       MemorySize: 128
-      Timeout: 3
+      Timeout: 5
       Environment:
         Variables:
           VerisureUsername:
