@@ -2,6 +2,9 @@ import json
 import uuid
 from string import Template
 import time
+import os
+import verisure
+from contextlib import contextmanager
 
 locks = [
     {
@@ -23,6 +26,7 @@ endpoint_to_device_label = {
     "lock-002": "2AQT 8W8E",
     "lock-003": "2AQT 8WYH"
 }
+
 
 def generateEndpointDict(endpoint):
     with open('lock_endpoint.tpl', 'r') as template_file:
@@ -49,18 +53,34 @@ def handle_discovery():
     return response
 
 
+@contextmanager
+def verisure_session():
+    session = verisure.Session(os.environ['VerisureUsername'], os.environ['VerisurePassword'], cookieFileName='/tmp/verisure_cookie')
+    session.login()
+    yield session
+    session.logout()
+
+
+def set_lock_state(endpointId, state):
+    with verisure_session() as session:
+        try:
+            session.set_lock_state(os.environ['VerisurePIN'], endpoint_to_device_label[endpointId], state)
+        except verisure.ResponseError as err:
+            if err.text['errorCode'] != 'VAL_00819':  # VAL_00819 means that lock was already in the requested state
+                raise err
+
+
 def handle_lock(endpointId, correlationToken):
-    #    print(os.environ['USERNAME'])
-    #    print(os.environ['PIN'])
+    set_lock_state(endpointId, 'lock')
     with open('response.tpl', 'r') as template_file:
         template = Template(template_file.read())
-        print(template)
         response_json = template.substitute(lockState='LOCKED', timeOfSample=get_utc_timestamp(), messageId=str(uuid.uuid4()),
                                             correlationToken=correlationToken, endpointId=endpointId)
         return json.loads(response_json)
 
 
 def handle_unlock(endpointId, correlationToken):
+    set_lock_state(endpointId, 'unlock')
     with open('response.tpl', 'r') as template_file:
         template = Template(template_file.read())
         response_json = template.substitute(lockState='UNLOCKED', timeOfSample=get_utc_timestamp(), messageId=str(uuid.uuid4()),

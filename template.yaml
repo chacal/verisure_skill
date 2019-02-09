@@ -30,11 +30,11 @@ Resources:
       Timeout: 3
       Environment:
         Variables:
-          VERISURE_USERNAME:
+          VerisureUsername:
             Ref: VerisureUsername
-          VERISURE_PASSWORD:
+          VerisurePassword:
             Ref: VerisurePassword
-          VERISURE_PIN:
+          VerisurePIN:
             Ref: VerisurePIN
 
   VerisureSkillAskPermission:

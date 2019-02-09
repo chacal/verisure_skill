@@ -1,3 +1,6 @@
+include secrets.properties
+export
+
 build:
 	@sam build
 
