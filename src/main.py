@@ -18,6 +18,11 @@ locks = [
     },
 ]
 
+endpoint_to_device_label = {
+    "lock-001": "2AQT 8F6A",
+    "lock-002": "2AQT 8W8E",
+    "lock-003": "2AQT 8WYH"
+}
 
 def generateEndpointDict(endpoint):
     with open('lock_endpoint.tpl', 'r') as template_file:
